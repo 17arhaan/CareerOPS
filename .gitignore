@@ -1,0 +1,45 @@
+# ============================================================
+# Personal data — everything about YOU stays on your machine.
+# The repo ships *.example templates; /setup generates the real
+# files locally and git never sees them.
+# ============================================================
+profile/profile.md
+preferences/job-search-preferences.md
+resume/current.md
+resume/versions/
+tracker/state.json
+tracker/feedback.json
+packets/
+coverletters/
+notes/
+context/
+dashboard/
+
+# Secrets / credentials
+.env
+*.local
+gmail-token.json
+*-credentials.json
+.jobhunt/
+
+# Local Claude Code permission grants
+.claude/settings.local.json
+
+# Caches
+tracker/gmail-cache.json
+tracker/indeed-cache.json
+__pycache__/
+*.pyc
+
+# Vendored third-party MCP servers (cloned by scripts/setup-mcp.sh, not ours to commit)
+vendor/
+
+# LinkedIn MCP session (real account cookies)
+.linkedin-mcp/
+
+# OS
+.DS_Store
+
+# Logs
+logs/
+*.log
