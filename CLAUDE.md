@@ -41,6 +41,7 @@ resume/versions/                  # A/B resume variants (gitignored)
 tracker/state.json                # source of truth: applied + current queue (gitignored)
 tracker/feedback.json             # approve/reject history (gitignored)
 packets/apply-packet-YYYY-MM-DD.md  # daily markdown packets (gitignored)
+briefs/brief-YYYY-MM-DD.md        # /autopilot morning briefs (gitignored)
 coverletters/{company}-{role}-{date}.md  # generated cover letters (gitignored)
 notes/                            # interview prep + company research (gitignored)
 scripts/                          # app server, dashboard renderer, URL verifier, cron

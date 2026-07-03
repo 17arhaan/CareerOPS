@@ -75,6 +75,10 @@ python3 scripts/serve_dashboard.py     # then open http://localhost:8787
                     everything reads + writes tracker/state.json
 ```
 
+Don't want to run the morning column yourself? `scripts/setup-automation.sh install`
+schedules `/autopilot` to do all of it before you wake up — see
+[Full automation](#full-automation-autopilot).
+
 ## The app
 
 `python3 scripts/serve_dashboard.py` serves a full local web app from
@@ -121,6 +125,7 @@ normally.
 | Command | Does |
 |---------|------|
 | `/setup` | First-run interview; generates all your personal files. **Start here.** |
+| `/autopilot` | The whole morning in one shot: refresh tracker, build packet, draft follow-ups, write the brief. This is what the scheduler runs. |
 | `/daily-packet [date]` | Build the day's packet of verified roles + cover letters, update tracker. |
 | `/status` | Morning briefing: pace vs goal, queue, follow-ups due, one action. |
 | `/suggest-companies [filter]` | 10 fresh verified roles, no state change (browse mode). |
@@ -172,16 +177,44 @@ If you use Claude on the web/desktop, the hosted **Gmail** and **Indeed** connec
 (Settings → Connectors) power `/refresh-tracker` and give `/daily-packet` durable
 Indeed links with full JD access.
 
-## Full automation (cron)
+## Full automation (autopilot)
+
+One command installs the whole schedule:
 
 ```bash
-crontab scripts/crontab.example   # 6am packet, 7am Gmail refresh, Monday 9am digest
+scripts/setup-automation.sh install                    # 7:00 autopilot, Monday 9:00 digest
+scripts/setup-automation.sh install --autopilot 06:30  # pick your own times
+scripts/setup-automation.sh status                     # what's installed + recent runs
+scripts/setup-automation.sh uninstall
 ```
 
-Each entry calls `scripts/run-claude.sh "/command"` headlessly (`claude -p`) and logs
-to `logs/`. Wake up to a packet of verified roles with cover letters already written.
+On macOS this installs **launchd** agents (a run missed while your laptop was
+asleep fires on wake — cron just skips it); on Linux it installs crontab entries.
+
+Every morning, `/autopilot` runs headlessly and:
+
+1. pulls Gmail confirmations into the tracker (when the connector is available),
+2. builds the day's packet — links verified, JDs checked, cover letters written,
+3. drafts follow-up emails for applications that have gone silent 7+ days,
+4. writes `briefs/brief-YYYY-MM-DD.md` and pings you a **desktop notification**
+   with the result.
+
+You wake up, read the brief, and spend your time actually applying and talking
+to people — the drudgework is done.
+
+Under the hood, `scripts/run-claude.sh` handles the unglamorous parts: it finds
+the `claude` CLI from cron's bare environment, takes a lock so overlapping runs
+can't corrupt the tracker, logs every run to `logs/` (auto-rotated), and runs
+with `--permission-mode acceptEdits` against the tool allowlist committed in
+`.claude/settings.json` — so unattended runs work without granting Claude
+blanket permissions. Test the pipeline any time with
+`scripts/run-claude.sh "/status"`.
+
 Note: headless runs may not have the hosted Gmail/Indeed connectors; the local
-JobSpy/LinkedIn MCPs are the headless-safe sources.
+JobSpy/LinkedIn MCPs (`scripts/setup-mcp.sh`) are the headless-safe sourcing
+path, and `/autopilot` degrades gracefully when a source is missing. It still
+never sends anything on your behalf — follow-ups land as drafts for you to
+review.
 
 ## Utility scripts
 

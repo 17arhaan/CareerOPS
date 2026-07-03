@@ -1,12 +1,14 @@
-# CareerOPS scheduled tasks. Install with:  crontab scripts/crontab.example
-# Adjust the path if the repo is not at ~/Coding/CareerOPS.
-# Times are local. claude (Claude Code CLI) must be on PATH for cron's environment.
+# CareerOPS scheduled tasks — manual crontab reference.
+# Prefer the installer, which handles macOS (launchd) and Linux (cron) for you:
+#
+#   scripts/setup-automation.sh install
+#
+# If you'd rather manage crontab yourself:  crontab scripts/crontab.example
+# Adjust the path if the repo is not at ~/CareerOPS. Times are local.
+# run-claude.sh finds the claude CLI, locks, logs, and notifies on its own.
 
-# Daily apply packet at 6am
-0 6 * * *  cd ~/Coding/CareerOPS && scripts/run-claude.sh "/daily-packet"  >> logs/cron.log 2>&1
-
-# Refresh tracker from Gmail at 7am
-0 7 * * *  cd ~/Coding/CareerOPS && scripts/run-claude.sh "/refresh-tracker" >> logs/cron.log 2>&1
+# Morning autopilot at 7am: refresh tracker, build the packet, draft follow-ups, write the brief
+0 7 * * *  cd ~/CareerOPS && scripts/run-claude.sh "/autopilot" >> logs/cron.log 2>&1
 
 # Weekly digest Monday 9am
-0 9 * * 1  cd ~/Coding/CareerOPS && scripts/run-claude.sh "/weekly-digest" >> logs/cron.log 2>&1
+0 9 * * 1  cd ~/CareerOPS && scripts/run-claude.sh "/weekly-digest" >> logs/cron.log 2>&1
