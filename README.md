@@ -95,7 +95,18 @@ schedules `/autopilot` to do all of it before you wake up — see
 - **Network** — a tiny CRM for referral contacts (`/referral` finds them for you).
 - **Prep** — per-company interview-prep quick links; pairs with `/interview-prep`,
   `/mock-interview`, `/dsa`.
+- **Docs** — read your morning briefs, daily packets, and every generated cover
+  letter rendered right in the app. New files appear automatically.
 - **Settings** — daily goal, target date, your name, school slug, theme.
+
+Plus, everywhere in the app:
+
+- **▶ Run** (top bar) — fire Autopilot, Daily packet, Refresh tracker, or the
+  Weekly digest without touching a terminal. A live pill shows the run in
+  progress; click it for the streaming log, and the app refreshes itself when
+  the run lands.
+- **Command palette** — press `k` (or ⌘K) and type: `run autopilot`,
+  `go to queue`, `add`, `theme`... everything is three keystrokes away.
 
 It auto-refreshes every 30s and reflects anything the slash commands change.
 `scripts/render_dashboard.py` also produces a static `dashboard/index.html` snapshot
@@ -201,6 +212,9 @@ Every morning, `/autopilot` runs headlessly and:
 
 You wake up, read the brief, and spend your time actually applying and talking
 to people — the drudgework is done.
+
+Prefer clicking to scheduling? The same runs can be fired any time from the
+app's **▶ Run** button — same runner, same logs, same notification.
 
 Under the hood, `scripts/run-claude.sh` handles the unglamorous parts: it finds
 the `claude` CLI from cron's bare environment, takes a lock so overlapping runs

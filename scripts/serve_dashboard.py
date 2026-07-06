@@ -19,12 +19,13 @@ the static dashboard/index.html snapshot.
 """
 import json
 import os
+import subprocess
 import threading
 import time
 from datetime import date, datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 
 def _load_dotenv():
@@ -51,6 +52,14 @@ from webapp import APP_HTML  # noqa: E402
 
 PORT = 8787
 LOCK = threading.Lock()
+ROOT = rd.ROOT
+
+# Directories the Docs tab may browse (read-only, basename-sanitized).
+DOC_DIRS = ("briefs", "packets", "coverletters", "notes")
+# Slash commands the Run Center may fire headlessly.
+RUN_COMMANDS = ("/autopilot", "/daily-packet", "/refresh-tracker",
+                "/weekly-digest", "/status")
+RUN_LOCK_DIR = ROOT / "logs" / ".run-claude.lock"
 
 
 def load_state():
@@ -266,10 +275,73 @@ def handle_chat(payload):
     return {"reply": reply}
 
 
+# ---- Docs browsing + Run Center ----
+def h_docs_list(params):
+    d = (params.get("dir") or [""])[0]
+    if d not in DOC_DIRS:
+        return {"error": "unknown dir"}
+    folder = ROOT / d
+    files = []
+    if folder.is_dir():
+        for p in sorted(folder.glob("*.md"), key=lambda p: p.stat().st_mtime, reverse=True):
+            files.append({"name": p.name, "mtime": int(p.stat().st_mtime),
+                          "size": p.stat().st_size})
+    return {"dir": d, "files": files[:200]}
+
+
+def h_doc_read(params):
+    d = (params.get("dir") or [""])[0]
+    name = os.path.basename((params.get("name") or [""])[0])
+    if d not in DOC_DIRS or not name.endswith(".md"):
+        return {"error": "bad request"}
+    p = ROOT / d / name
+    if not p.is_file():
+        return {"error": "not found"}
+    return {"name": name, "content": p.read_text(errors="replace")[:400000]}
+
+
+def _latest_log():
+    logs = sorted((p for p in (ROOT / "logs").glob("*.log")
+                   if p.name not in ("launchd.log", "cron.log")),
+                  key=lambda p: p.stat().st_mtime, reverse=True)
+    return logs[0] if logs else None
+
+
+def h_runstatus(_params=None):
+    running = RUN_LOCK_DIR.is_dir()
+    log = _latest_log()
+    tail = ""
+    if log:
+        try:
+            lines = log.read_text(errors="replace").splitlines()
+            tail = "\n".join(lines[-60:])
+        except OSError:
+            pass
+    return {"running": running, "log": log.name if log else None, "tail": tail}
+
+
+def h_run(p):
+    cmd = p.get("command", "")
+    if cmd not in RUN_COMMANDS:
+        return {"ok": False, "error": "command not allowed"}
+    if RUN_LOCK_DIR.is_dir():
+        return {"ok": False, "error": "a run is already in progress"}
+    runner = ROOT / "scripts" / "run-claude.sh"
+    # Strip the copilot's API key so the headless CLI authenticates the same
+    # way cron runs do (the user's own claude login + connectors), instead of
+    # silently switching to API-key billing.
+    env = {k: v for k, v in os.environ.items()
+           if k not in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN")}
+    subprocess.Popen(["bash", str(runner), cmd], cwd=str(ROOT), env=env,
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                     start_new_session=True)
+    return {"ok": True, "started": cmd}
+
+
 ROUTES = {"/api/applied": h_applied, "/api/unapply": h_unapply, "/api/add": h_add,
           "/api/delete": h_delete, "/api/stage": h_stage, "/api/note": h_note,
           "/api/goal": h_goal, "/api/settings": h_settings, "/api/contact": h_contact,
-          "/api/round": h_round}
+          "/api/round": h_round, "/api/run": h_run}
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -285,11 +357,18 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_GET(self):
-        path = urlparse(self.path).path
+        parsed = urlparse(self.path)
+        path, params = parsed.path, parse_qs(parsed.query)
         if path in ("/", "/index.html"):
             self._send(200, APP_HTML, "text/html; charset=utf-8")
         elif path == "/api/state":
             self._send(200, rd.STATE.read_text(), "application/json")
+        elif path == "/api/docs":
+            self._send(200, json.dumps(h_docs_list(params)))
+        elif path == "/api/doc":
+            self._send(200, json.dumps(h_doc_read(params)))
+        elif path == "/api/runstatus":
+            self._send(200, json.dumps(h_runstatus(params)))
         else:
             self._send(404, '{"error":"not found"}')
 

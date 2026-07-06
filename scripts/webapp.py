@@ -36,7 +36,7 @@ a{color:var(--blue)}
 /* top bar */
 .topbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .topinner{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:11px 20px}
-.brand{font-family:"Iowan Old Style",Georgia,serif;font-size:20px;font-weight:700;letter-spacing:.3px;cursor:default}
+.brand{font-family:"Iowan Old Style",Georgia,serif;font-size:20px;font-weight:700;letter-spacing:.3px;cursor:default;background:linear-gradient(90deg,var(--green),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
 .nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 .tab{font-size:13px;padding:7px 12px;border-radius:9px;cursor:pointer;color:var(--muted);border:1px solid transparent;user-select:none;transition:background .15s}
 .tab:hover{background:var(--surface2)}
@@ -132,7 +132,45 @@ td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
 .dots span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--muted);margin:0 1px;animation:blink 1.2s infinite}
 .dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%,60%,100%{opacity:.2}30%{opacity:1}}
-@media(max-width:820px){.stats{grid-template-columns:repeat(2,1fr)}.kanban{grid-template-columns:1fr 1fr}.pipe-row{grid-template-columns:repeat(2,1fr)}}
+/* run center */
+.runwrap{position:relative}
+.runbtn{display:flex;align-items:center;gap:6px;font-size:13px;padding:7px 13px;border-radius:9px;border:1px solid var(--green);background:var(--green);color:#fff;cursor:pointer;font-family:inherit;transition:transform .08s,filter .15s}
+.runbtn:hover{filter:brightness(1.08)}.runbtn:active{transform:scale(.96)}
+.runmenu{position:absolute;top:115%;right:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 44px rgba(0,0,0,.2);padding:6px;display:none;z-index:80;min-width:250px}
+.runmenu.open{display:block;animation:fade .15s}
+.runmenu button{display:block;width:100%;text-align:left;background:none;border:none;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text);font-family:inherit}
+.runmenu button:hover{background:var(--surface2)}
+.runmenu .sub{font-size:10px;color:var(--muted);display:block;margin-top:1px}
+.runpill{display:flex;align-items:center;gap:6px;font-size:12px;color:#fff;background:var(--amber);padding:5px 11px;border-radius:20px;cursor:pointer;white-space:nowrap}
+.minispin{width:10px;height:10px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;flex:0 0 auto}
+pre.logpre{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:11.5px;line-height:1.5;max-height:52vh;overflow:auto;white-space:pre-wrap;font-family:ui-monospace,"SF Mono",Menlo,monospace}
+/* docs */
+.docs{display:grid;grid-template-columns:290px 1fr;gap:16px;align-items:start}
+.doclist{max-height:70vh;overflow:auto;padding-right:4px}
+.docitem{padding:8px 10px;border-radius:9px;cursor:pointer;font-size:13px;border:1px solid transparent}
+.docitem:hover{background:var(--surface2)}
+.docitem.active{background:var(--surface2);border-color:var(--line)}
+.docitem .sub{font-size:10px;color:var(--muted);margin-top:1px}
+.dirtabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.dirtab{font-size:12px;padding:5px 11px;border-radius:8px;cursor:pointer;color:var(--muted);border:1px solid var(--line);user-select:none}
+.dirtab.active{background:var(--text);color:var(--surface);border-color:var(--text)}
+.mdview{font-size:14px;line-height:1.65;max-height:72vh;overflow:auto}
+.mdview h1,.mdview h2,.mdview h3,.mdview h4{font-family:"Iowan Old Style",Georgia,serif;margin:14px 0 6px}
+.mdview h1{font-size:22px}.mdview h2{font-size:18px}.mdview h3{font-size:15px}
+.mdview code{background:var(--surface2);padding:1px 5px;border-radius:5px;font-size:12.5px}
+.mdview a{color:var(--blue)}
+.mdview ul{margin:6px 0;padding-left:20px}.mdview li{margin:3px 0}
+.mdview hr{border:none;border-top:1px solid var(--line);margin:12px 0}
+/* command palette */
+.palette{position:fixed;inset:0;background:rgba(12,12,12,.45);display:none;align-items:flex-start;justify-content:center;padding-top:14vh;z-index:170}
+.palette.open{display:flex;animation:fade .12s}
+.palbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;width:min(560px,92vw);box-shadow:0 24px 80px rgba(0,0,0,.35);overflow:hidden}
+.palbox input{width:100%;padding:14px 16px;border:none;outline:none;background:transparent;font-size:15px;color:var(--text);font-family:inherit;border-bottom:1px solid var(--line);box-sizing:border-box}
+.palist{max-height:330px;overflow:auto;padding:6px}
+.palitem{padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13.5px;display:flex;justify-content:space-between;align-items:center}
+.palitem.sel,.palitem:hover{background:var(--surface2)}
+.palitem .k{font-size:10px;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+@media(max-width:820px){.stats{grid-template-columns:repeat(2,1fr)}.kanban{grid-template-columns:1fr 1fr}.pipe-row{grid-template-columns:repeat(2,1fr)}.docs{grid-template-columns:1fr}.doclist{max-height:34vh}}
 </style></head>
 <body>
 <div id="splash"><div class="splash-logo">CareerOPS</div><div class="spinner"></div><div class="splash-sub">command center</div></div>
@@ -140,11 +178,20 @@ td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
   <div class="brand">CareerOPS</div>
   <div class="nav" id="nav"></div>
   <div class="chip" id="goalchip"></div>
+  <span id="runpill" class="runpill" style="display:none" onclick="showRunLog()" title="A headless run is in progress. Click for the log."><span class="minispin"></span> running</span>
+  <div class="runwrap">
+    <button class="runbtn" id="runbtn" onclick="toggleRunMenu(event)" title="Run automation (or press k)">&#9654; Run</button>
+    <div class="runmenu" id="runmenu"></div>
+  </div>
   <div class="iconbtn" id="themebtn" title="Toggle theme (d)" onclick="toggleTheme()">&#9789;</div>
   <div class="chip"><span class="led"></span> live</div>
 </div></div>
 <div class="wrap"><div class="view" id="view"></div></div>
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<div class="palette" id="palette"><div class="palbox">
+  <input id="palinput" placeholder="Type a command... (run autopilot, go to queue, add, theme)" oninput="palRender()" onkeydown="palKey(event)">
+  <div class="palist" id="palist"></div>
+</div></div>
 <div class="toast" id="toast"></div>
 
 <button class="chatfab" id="chatfab" title="Ask your AI copilot" onclick="toggleChat()">&#128172;</button>
@@ -164,7 +211,12 @@ const STAGECOL={"Applied":"#5b5b5b","Screening":"#2b4a73","Online Assessment":"#
 const TYPECOL={onsite:"#2b4a73",hybrid:"#a16207",remote:"#2e6b3e"};
 const CONTACT_STATUS={"To Reach":"#5b5b5b","Reached Out":"#2b4a73","Replied":"#a16207","Referred":"#2e6b3e","No Reply":"#9c2f2f"};
 const OUTCOMES=["Pending","Passed","Failed","Cancelled"];
-const TABS=["Overview","Queue","Pipeline","Applications","Analytics","Network","Prep","Settings"];
+const TABS=["Overview","Queue","Pipeline","Applications","Analytics","Network","Prep","Docs","Settings"];
+const RUNS=[["/autopilot","Autopilot","refresh + packet + follow-ups + morning brief"],
+  ["/daily-packet","Daily packet","10 fresh verified roles + cover letters"],
+  ["/refresh-tracker","Refresh tracker","pull Gmail confirmations into the pipeline"],
+  ["/weekly-digest","Weekly digest","recap, response rate, follow-up list"],
+  ["/status","Status briefing","goal pace, queue, one action"]];
 let S={}, TAB="Overview", q="";
 
 const esc=s=>(s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -203,10 +255,10 @@ function renderNav(){
   const m=metrics();
   document.getElementById("goalchip").innerHTML=m.dleft!=null?`<b>${m.dleft}</b>&nbsp;days to ${esc(S.target_offer_date)}`:`<span class="btn sm" onclick="setTab('Settings')">set goal</span>`;
 }
-function setTab(t){TAB=t;q="";render();window.scrollTo({top:0,behavior:"smooth"});}
+function setTab(t){TAB=t;q="";render();if(t==="Docs")loadDocs();window.scrollTo({top:0,behavior:"smooth"});}
 
 function render(){renderNav();const v=document.getElementById("view");v.style.animation="none";v.offsetHeight;v.style.animation="";
-  v.innerHTML=({Overview:vOverview,Queue:vQueue,Pipeline:vPipeline,Applications:vApps,Analytics:vAnalytics,Network:vNetwork,Prep:vPrep,Settings:vSettings}[TAB]||vOverview)();
+  v.innerHTML=({Overview:vOverview,Queue:vQueue,Pipeline:vPipeline,Applications:vApps,Analytics:vAnalytics,Network:vNetwork,Prep:vPrep,Docs:vDocs,Settings:vSettings}[TAB]||vOverview)();
   document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")closeModal();};}
 
 function vOverview(){
@@ -346,7 +398,7 @@ function vSettings(){
     <h2 class="sec">Data</h2>
     <p class="muted">Source of truth is <code>tracker/state.json</code>. Slash commands and this app both write to it.</p>
     <a class="btn" href="/api/state" target="_blank">View raw state JSON</a>
-    <div style="margin-top:14px"><b>Keyboard:</b> <span class="muted">1-8 switch tabs &middot; n add &middot; / search &middot; d theme</span></div></div>`;
+    <div style="margin-top:14px"><b>Keyboard:</b> <span class="muted">k or &#8984;K command palette &middot; 1-9 switch tabs &middot; n add &middot; / search &middot; d theme &middot; c copilot</span></div></div>`;
 }
 async function saveSettings(){try{await api("/api/settings",{daily_goal:document.getElementById("s_goal").value,user_name:document.getElementById("s_name").value.trim(),alumni_school_slug:document.getElementById("s_school").value.trim()});const tv=document.getElementById("s_target").value;await api("/api/goal",{date:tv});toast("Settings saved.");await loadState();}catch(e){toast("Error: "+e.message);}}
 
@@ -386,6 +438,81 @@ async function roundAdd(appId){const g=id=>document.getElementById(id).value.tri
   try{await api("/api/round",{op:"add",appId,type:g("r_type"),date:g("r_date"),outcome:document.getElementById("r_outcome").value,notes:g("r_notes")});toast("Round added.");await loadState();roundsModal(appId);}catch(e){toast("Error: "+e.message);}}
 async function roundDel(appId,roundId){try{await api("/api/round",{op:"delete",appId,roundId});toast("Round deleted.");await loadState();roundsModal(appId);}catch(e){toast("Error: "+e.message);}}
 
+/* ---- run center ---- */
+let RUNNING=false;
+function renderRunMenu(){document.getElementById("runmenu").innerHTML=RUNS.map(([cmd,l,sub])=>`<button onclick="startRun('${cmd}')">${esc(l)}<span class="sub">${esc(sub)}</span></button>`).join("")+`<button onclick="showRunLog()">View latest run log<span class="sub">output of the last headless run</span></button>`;}
+function toggleRunMenu(e){e.stopPropagation();document.getElementById("runmenu").classList.toggle("open");}
+async function startRun(cmd){document.getElementById("runmenu").classList.remove("open");
+  try{const r=await api("/api/run",{command:cmd});
+    if(r.ok){toast("Started "+cmd+" in the background. The pill up top shows progress.");await pollRun();}
+    else toast(r.error||"Could not start.");}
+  catch(e){toast("Error: "+e.message);}}
+async function pollRun(){try{const r=await(await fetch("/api/runstatus")).json();
+  const pill=document.getElementById("runpill");
+  if(r.running){pill.style.display="flex";RUNNING=true;}
+  else{pill.style.display="none";
+    if(RUNNING){RUNNING=false;toast("Run finished. Refreshing...");await loadState();if(TAB==="Docs")loadDocs();}}}
+  catch(e){}}
+async function showRunLog(){let r={};try{r=await(await fetch("/api/runstatus")).json();}catch(e){r={tail:"Error: "+e.message};}
+  openSheet(`<h3>${r.running?"Run in progress":"Latest run"} <span class="muted mono">${esc(r.log||"")}</span></h3>
+    <pre class="logpre">${esc(r.tail||"(no output yet; headless runs flush their transcript at the end)")}</pre>
+    <div class="row" style="justify-content:flex-end;margin-top:10px"><button class="btn" onclick="showRunLog()">Refresh</button><button class="btn primary" onclick="closeModal()">Close</button></div>`);}
+
+/* ---- docs ---- */
+const DOCDIRS=[["briefs","Briefs"],["packets","Packets"],["coverletters","Letters"],["notes","Notes"]];
+let DOCDIR="briefs",DOCFILES=[],DOCSEL=null,DOCTXT="",DOCBUSY=false;
+function md(t){let h=esc(t);
+  h=h.replace(/^#{4,6} (.*)$/gm,"<h4>$1</h4>").replace(/^### (.*)$/gm,"<h3>$1</h3>").replace(/^## (.*)$/gm,"<h2>$1</h2>").replace(/^# (.*)$/gm,"<h1>$1</h1>");
+  h=h.replace(/^\s*---+\s*$/gm,"<hr>");
+  h=h.replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/`([^`]+)`/g,"<code>$1</code>");
+  h=h.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  h=h.replace(/^(?:&gt;|>) ?(.*)$/gm,'<span class="muted">$1</span>');
+  h=h.replace(/^[-*] (.*)$/gm,"<li>$1</li>").replace(/(?:<li>.*<\/li>\n?)+/g,m=>"<ul>"+m.replace(/\n/g,"")+"</ul>");
+  h=h.replace(/\n{2,}/g,"<br><br>").replace(/\n/g,"<br>");
+  return h;}
+function prettyDoc(n){return n.replace(/\.md$/,"").replace(/-/g," ");}
+function vDocs(){
+  const tabs=DOCDIRS.map(([d,l])=>`<span class="dirtab ${d===DOCDIR?"active":""}" onclick="setDocDir('${d}')">${l}</span>`).join("");
+  const list=DOCFILES.map(f=>`<div class="docitem ${f.name===DOCSEL?"active":""}" onclick="openDoc('${esc(f.name)}')"><div>${esc(prettyDoc(f.name))}</div><div class="sub">${new Date(f.mtime*1000).toLocaleString()} &middot; ${(f.size/1024).toFixed(1)} kb</div></div>`).join("")
+    ||`<div class="empty">${DOCBUSY?"Loading...":"Nothing here yet. Hit &#9654; Run &rarr; Autopilot and this fills itself."}</div>`;
+  const body=DOCSEL?`<div class="mdview">${md(DOCTXT)}</div>`:'<div class="empty">Select a document.</div>';
+  return `<div class="card"><h2 class="sec">Documents &middot; briefs, packets, and letters land here automatically</h2>
+    <div class="dirtabs">${tabs}</div>
+    <div class="docs"><div class="doclist">${list}</div><div class="card" style="margin:0">${body}</div></div></div>`;}
+async function setDocDir(d){DOCDIR=d;DOCSEL=null;DOCTXT="";await loadDocs();}
+async function loadDocs(){DOCBUSY=true;try{const r=await(await fetch("/api/docs?dir="+DOCDIR)).json();DOCFILES=r.files||[];DOCBUSY=false;
+  if(!DOCSEL&&DOCFILES.length)return openDoc(DOCFILES[0].name);if(TAB==="Docs")render();}
+  catch(e){DOCBUSY=false;toast("Error: "+e.message);}}
+async function openDoc(name){DOCSEL=name;
+  try{const r=await(await fetch(`/api/doc?dir=${DOCDIR}&name=${encodeURIComponent(name)}`)).json();DOCTXT=r.content||r.error||"";}
+  catch(e){DOCTXT="Error: "+e.message;}
+  if(TAB==="Docs")render();}
+
+/* ---- command palette ---- */
+let PALSEL=0;
+function palActions(){const a=[];
+  RUNS.forEach(([cmd,l,sub])=>a.push({label:"Run: "+l,k:cmd,run:()=>startRun(cmd)}));
+  TABS.forEach((t,i)=>a.push({label:"Go to "+t,k:String(i+1),run:()=>setTab(t)}));
+  a.push({label:"Log an application",k:"n",run:()=>addModal()});
+  a.push({label:"Add a networking contact",k:"",run:()=>{setTab("Network");contactModal();}});
+  a.push({label:"Open AI copilot",k:"c",run:()=>toggleChat()});
+  a.push({label:"View latest run log",k:"",run:()=>showRunLog()});
+  a.push({label:"Toggle theme",k:"d",run:()=>toggleTheme()});
+  return a;}
+function openPalette(){const p=document.getElementById("palette");p.classList.add("open");
+  const i=document.getElementById("palinput");i.value="";PALSEL=0;palRender();setTimeout(()=>i.focus(),40);}
+function closePalette(){document.getElementById("palette").classList.remove("open");}
+function palFiltered(){const q=(document.getElementById("palinput").value||"").toLowerCase();
+  return palActions().filter(a=>a.label.toLowerCase().includes(q));}
+function palRender(){const list=palFiltered();PALSEL=Math.min(PALSEL,Math.max(0,list.length-1));
+  document.getElementById("palist").innerHTML=list.map((a,i)=>`<div class="palitem ${i===PALSEL?"sel":""}" onmousedown="palGo(${i})">${esc(a.label)}<span class="k">${esc(a.k||"")}</span></div>`).join("")||'<div class="empty">No matches.</div>';}
+function palGo(i){const list=palFiltered();if(list[i]){closePalette();list[i].run();}}
+function palKey(e){
+  if(e.key==="ArrowDown"){PALSEL++;palRender();e.preventDefault();}
+  else if(e.key==="ArrowUp"){PALSEL=Math.max(0,PALSEL-1);palRender();e.preventDefault();}
+  else if(e.key==="Enter"){palGo(PALSEL);e.preventDefault();}
+  else if(e.key==="Escape"){closePalette();}}
+
 /* ---- theme ---- */
 function applyTheme(t){document.documentElement.dataset.theme=t;document.getElementById("themebtn").innerHTML=t==="dark"?"&#9728;":"&#9789;";localStorage.setItem("careerops_theme",t);}
 function setTheme(t){applyTheme(t);toast(t[0].toUpperCase()+t.slice(1)+" theme.");}
@@ -400,12 +527,16 @@ function checkGoal(){const m=metrics();const key="careerops_goalhit";const today
   if(m.todayN>=m.G&&localStorage.getItem(key)!==todayStr){localStorage.setItem(key,todayStr);confetti();toast("Daily goal hit. "+m.todayN+"/"+m.G+". Keep going!");}}
 
 /* ---- keyboard ---- */
-document.addEventListener("keydown",e=>{const tag=(e.target.tagName||"").toLowerCase();if(["input","textarea","select"].includes(tag))return;
-  if(e.key>="1"&&e.key<="8"){setTab(TABS[+e.key-1]);}
+document.addEventListener("keydown",e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){openPalette();e.preventDefault();return;}
+  const tag=(e.target.tagName||"").toLowerCase();if(["input","textarea","select"].includes(tag))return;
+  if(e.key>="1"&&e.key<="9"){setTab(TABS[+e.key-1]);}
+  else if(e.key==="k"){openPalette();e.preventDefault();}
   else if(e.key==="n"){addModal();}
   else if(e.key==="d"){toggleTheme();}
   else if(e.key==="/"){if(TAB!=="Applications")setTab("Applications");setTimeout(()=>{const s=document.getElementById("appsearch");if(s)s.focus();},60);e.preventDefault();}
-  else if(e.key==="Escape"){closeModal();}});
+  else if(e.key==="Escape"){closeModal();closePalette();}});
+document.addEventListener("click",()=>{const m=document.getElementById("runmenu");if(m)m.classList.remove("open");});
 
 /* ---- AI copilot chat ---- */
 let chatHistory=[], chatBusy=false;
@@ -427,8 +558,12 @@ async function sendChat(e){e.preventDefault();if(chatBusy)return false;
 document.addEventListener("keydown",e=>{if(e.key==="c"&&!["input","textarea","select"].includes((e.target.tagName||"").toLowerCase())){toggleChat();}});
 
 applyTheme(localStorage.getItem("careerops_theme")||"light");
+renderRunMenu();
+document.getElementById("palette").addEventListener("click",e=>{if(e.target.id==="palette")closePalette();});
 loadState(true);
 setInterval(loadState,30000);
+pollRun();
+setInterval(pollRun,6000);
 </script>
 </body></html>
 """
